@@ -21,7 +21,7 @@ mongoose.connect('mongodb+srv://tejassatish:mernstack@cluster0.zh6szkp.mongodb.n
 })
 
 
-app.post(`/blogs`,async (req,res)=>{
+app.post(`/blogs/post`,async (req,res)=>{
     try{
         const blog = await Blog.create(req.body)
         return res.status(200).json(blog)
@@ -30,7 +30,7 @@ app.post(`/blogs`,async (req,res)=>{
     }
 })
 
-app.get(`/blogs`, async (req,res)=>{
+app.get(`/blogs/get`, async (req,res)=>{
     try{
         const blogs=await Blog.find({})
         res.json(blogs)
@@ -40,13 +40,15 @@ app.get(`/blogs`, async (req,res)=>{
     }
 })
 
-app.delete(`/blogs/:id`, async (req,res)=>{
+
+
+app.delete(`/blogs/del/:id`, async (req,res)=>{
     try{
         //let id= new mongoose.mongo.BSON.ObjectId(req.body)
         //const blogs = await Blog.findByIdAndDelete(req.body.id)
         console.log(req.params)
         let {id}= req.params
-        const blog= await Blog.findByIdAndDelete(id);
+        const blog= await Blog.findByIdAndDelete(id)
         if(!blog){
             return res.status(404).json({"error": "no such id"})
         }
@@ -54,6 +56,36 @@ app.delete(`/blogs/:id`, async (req,res)=>{
         return res.status(200).json({"success":"true"})
     }catch(err){
         console.log(err)
+    }
+})
+
+app.put(`/blogs/put/:id`, async (req,res)=>{
+    try{
+        console.log(req.params)
+        let {id}= req.params
+        const blog= await Blog.findByIdAndUpdate(id,req.body)
+        if(!blog){
+            return res.status(404).json({"error": "no such id"})
+        }
+        return res.status(200).json(blog)
+    }catch(err){
+        console.log(err)
+    }
+})
+
+app.get(`/blogs/get/:id`, async (req,res)=>{
+    try{
+        let {id}=req.params
+        console.log(id)
+        const blog=await Blog.findById(id)
+        res.json(blog)
+        if(!blog){
+            return res.status(504).json({"error": "timeout"})
+        }
+        res.json(blog)
+    }catch(e){
+        console.error(e) 
+        console.log(typeof(db))
     }
 })
 
